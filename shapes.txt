@@ -1,0 +1,54 @@
+// const canvas = document.getElementById("myCanvas");
+// const r = canvas.getContext("2d");
+
+// Draw Rectangle
+// r.fillStyle = 'green'; // fill color of object
+// r.fillStyle = "rgb(0 255 0 / 50%)"; // set 50% opacity
+// r.fillRect(100, 100, 200, 150); // x, y, width, height
+// r.clearRect(160, 140, 75, 75); // create a blank area in rectangle
+
+// Outline/border of Rectangle
+// r.strokeStyle = "blue";
+// r.strokeStyle = "rgb(0 0 255 / 50%)"; // set 50% opacity
+// r.lineWidth = 5;
+// r.strokeRect(100, 100, 200, 150); // draws an outline
+
+// Draw a line
+// r.moveTo(0, 0); // Starting position
+// r.lineTo(175, 175); // Ending position
+// r.lineWidth = 10;
+// r.strokeStyle = "red";
+// r.lineCap = "round";
+// r.stroke(); // ink method to actually draw
+
+
+// Draw a circle
+// r.beginPath();
+// // r.arc(200, 220, 70, 0, 2 * Math.PI); // x, y, size, eraser
+// r.arc(200, 220, 70, 0, Math.PI); // Math.PI = half circle
+// r.fillStyle = "goldenrod";
+// r.fill();
+// r.lineWidth = 4;
+// r.strokeStyle = "red";
+// r.stroke();
+
+// Draw a triangle
+// r.beginPath(); // Declares we are about to draw a new path (without drawing)
+
+// r.moveTo(100, 20);
+// r.lineTo(160, 100); // bottom right corner of triangle
+// r.lineTo(35, 100); // bottom left of triangle
+// r.lineTo(100, 20); // top of triangle
+// r.strokeStyle = "orange";
+// r.stroke();
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// r.fillStyle = "red";
+// r.fillRect(10, 10, 100, 50);
+
+// r.translate(70, 70);
+
+// r.rotate((Math.PI/180) * 20);
+// r.fillStyle = "blue";
+// r.fillRect(10, 10, 100, 50);

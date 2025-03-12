@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block Shape Game</title>
+    <style>
+    canvas {
+        border: 1px solid #d3d3de;
+        background-color: #f1f1f1;
+    }
+    #stop {
+        background-color: darkmagenta;
+        padding: 10px;
+        margin: 0 auto;
+    }
+    </style>
+</head>
+<body onload="startGame()">
+    <script src="./block.js"></script>
+    <br>
+    <p id="p">Welcome to Tetris!</p>
+    <br>
+    <!-- <button id="stop" onload="exitProgram()">Exit Game</button> -->
+    <button id="stop" onclick="exitProgram()">Exit Game</button>
+</body>
+</html>
