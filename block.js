@@ -123,18 +123,44 @@ function updateGameArea() {
             }
         }
 
+        // Collision Detection Logic (Stacking)
+        for (let j = 0; j <  gamePieces.length; j++) {
+            let other = gamePieces[j]; // another piece in the game
+
+            if (piece != other) {
+                // Check if piece is directly above another piece
+                if (piece.y + piece.height >= other.y && // if piece's bottom is at or covering other piece's top 
+                    piece.y < other.y &&
+                    piece.x < other.x + other.width &&    // if piece's left side is less than other's right side
+                    piece.x + piece.width > other.x) {    // if piece's right side is over other's left side
+
+                    console.log(`Piece ${i} is stacking on top of Piece ${j}`);
+
+                    piece.y = other.y - piece.height; // Snap to top of other piece
+                    piece.speedY = 0; // Stop falling
+                    piece.hasLanded = true; // this is required to make it work
+                }
+            }
+        }
+
         piece.update();
     }
 
     if (gamePieces.length > 0) { // Make sure there's at least one piece
-        // let activePiece = gamePieces[gamePieces.length - 1]; // Get last piece
         let lastPiece = gamePieces[gamePieces.length - 1];
-
-        if (lastPiece.y + lastPiece.height >= myGameArea.canvas.height || lastPiece.hasLanded) {
+        if (lastPiece.y + lastPiece.height >= myGameArea.canvas.height || lastPiece.hasLanded) { // adding `lastPiece.hasLanded` ensures that a piece will spawn if last piece touches floor or another piece
             let randomX = Math.floor(Math.random() * (myGameArea.canvas.width - 30));
             gamePieces.push(new component(30, 30, getRandomColor(), randomX, 0));
         }
+        
+        // Check: if squares stack up to top of canvas, game ends
+        if (lastPiece.y <= 0) { //if the top of last piece is less than or equal to top of canvas
+            console.log("Game Over.")
+            clearInterval(myGameArea.interval); // stop game
+            document.getElementById("p").innerHTML = "Game Over.";
+        }
     }
+
 
     // Control movement for last active piece
     if (gamePieces.length > 0) {
@@ -154,6 +180,7 @@ function updateGameArea() {
         activePiece.newPos();
     }
 }
+
 function exitProgram() {
     clearInterval(myGameArea.interval); // stop the game loop
     document.getElementById("p").innerHTML = "Game Ended.";
