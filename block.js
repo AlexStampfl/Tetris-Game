@@ -31,7 +31,7 @@ window.addEventListener("keyup", function (e) {
 })
 
 
-// Game area
+// Game area (Canvas size)
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
@@ -39,14 +39,14 @@ var myGameArea = {
         this.canvas.height = 270;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-        this.interval = setInterval(updateGameArea, 20); // 50 FPS
+        this.interval = setInterval(updateGameArea, 20); // 50 FPS, Game refreshes every 20 milliseconds, or 50 frames per second
     },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 }
 
-// Component (Game Piece)
+// Component (Game Piece) - this is where you define the shapes, size
 function component(width, height, color, x, y) {
     this.myGameArea = myGameArea;
     this.width = width;
@@ -56,7 +56,6 @@ function component(width, height, color, x, y) {
     this.x = x;
     this.y = y;
     this.color = color;
-    // this.hasLanded = false;
 
     this.update = function() {
         r = myGameArea.context;
@@ -66,13 +65,13 @@ function component(width, height, color, x, y) {
     this.newPos = function() {
         this.x += this.speedX;
 
-        // Prevent moving off left side
+        // Prevent piece from moving off left side
         if (this.x < 0) {
             this.x = 0;
         }
 
-        // Prevent moving off right side
-        if (this.x + this.width > myGameArea.canvas.width) {
+        // Prevent piece from moving off right side
+        if (this.x + this.width > myGameArea.canvas.width) { // right side is greater (farther right) than the right canvas border
             this.x = myGameArea.canvas.width - this.width;
         }
     }
@@ -110,11 +109,10 @@ function updateGameArea() {
 
     for (let i = 0; i < gamePieces.length; i++) {
         let piece = gamePieces[i];
-        // let hasLanded = false; // Flag to track if piece has landed
 
         // Move only if not landed
         if (piece.y + piece.height < myGameArea.canvas.height) { // if piece hasn't landed, keep falling
-            piece.y += 1; // falling motion
+            piece.y += 1; // falling motion (apply gravity)
         } else {
             // If this piece is at bottom, create new piece
             if (i === gamePieces.length - 1) {
@@ -127,6 +125,7 @@ function updateGameArea() {
         for (let j = 0; j <  gamePieces.length; j++) {
             let other = gamePieces[j]; // another piece in the game
 
+            // Ensure piece isn't checking against itself
             if (piece != other) {
                 // Check if piece is directly above another piece
                 if (piece.y + piece.height >= other.y && // if piece's bottom is at or covering other piece's top 
@@ -157,7 +156,7 @@ function updateGameArea() {
         if (lastPiece.y <= 0) { //if the top of last piece is less than or equal to top of canvas
             console.log("Game Over.")
             clearInterval(myGameArea.interval); // stop game
-            document.getElementById("p").innerHTML = "Game Over.";
+            document.getElementById("p").innerHTML = "Game Over. The pieces have stacked too high. ";
         }
     }
 
