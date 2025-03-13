@@ -1,0 +1,11 @@
+Next:
+1. Randomize shapes
+2. Limit colors
+3. Add a start button
+4. Create a border of grey blocks
+5. Fine tune landing mechanisms, when next to other square, it can't shift the other pieces
+6. (Optional) Create grid so that pieces can't just move horizontally centimeters off, a grid would ensure that moving the pieces on the x axis (horizontally) would "lock into place", so each piece in a column is aligned horizontally
+7. There needs to be rules for when you do well, the columns stacks disappear, so that the stacks don't just build up and you lose the game every time
+
+
+
