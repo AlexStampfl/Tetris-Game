@@ -1,5 +1,3 @@
-// const GRID_SIZE = 30; // size of one grid cell
-// const PIECE_MARGIN = 2; // Space around pieces to reveal grid lines
 var gamePieces = [];
 
 
@@ -11,14 +9,8 @@ const keys = {
 
 function startGame() {
     myGameArea.start();
-    gamePieces.push(new component(26, 28, getRandomColor(), 120, 10)); //size, size, color, x, y. Push new piece into the array
-    // gamePieces.push(new component(
-    //     GRID_SIZE - PIECE_MARGIN, // Width fills the cell minus margin
-    //     GRID_SIZE - PIECE_MARGIN, // Height fills the cell minus margin
-    //     getRandomColor(),
-    //     120,
-    //     10
-    //)); //size, size, color, x, y. Push new piece into the array
+    gamePieces.push(new component(26, 29, getRandomColor(), 120, 0)); 
+    //size, size, color, x, y. Push new piece into the array
 }
 
 // Keyboard input handling - doesn't move anything, just tracks whether a key is being held down
@@ -61,7 +53,6 @@ function gridContainer() {
 // Game area (Canvas size)
 var myGameArea = {
     canvas : document.createElement("canvas"),
-    // grid : document.getElementById("grid-container"),
     drawGrid : function() {
         let ctx = this.context;
         ctx.strokeStyle = "white"; // white grid lines
@@ -97,12 +88,9 @@ var myGameArea = {
 
 // Component (Game Piece) - this is where you define the shapes, size
 function component(width, height, color, x, y) {
-// function component(color, x, y) {
     this.myGameArea = myGameArea;
     this.width = width;
     this.height = height;
-    // this.width = GRID_SIZE - PIECE_MARGIN; // Auto-fit width
-    // this.height = GRID_SIZE - PIECE_MARGIN; // Auto-fit height
     this.speedX = 0;
     this.speedY = 0;
     this.x = x;
@@ -110,10 +98,60 @@ function component(width, height, color, x, y) {
     this.color = color;
 
     this.update = function() {
-        r = myGameArea.context;
-        r.fillStyle = this.color;
-        r.fillRect(this.x, this.y, this.width, this.height);
+        let ctx = myGameArea.context;
+
+        //New change at 11:31
+        // Convert color to RGB and create lighter & darker versions for inset effect
+        function adjustColor(color, amount, lighten = true) {
+            let match = color.match(/\d+/g); // Extract RGB values
+            if (!match) return color;
+            // let r = Math.max(0, parseInt(match[0]) - amount);
+            // let g = Math.max(0, parseInt(match[1]) - amount);
+            // let b = Math.max(0, parseInt(match[2]) - amount);
+            let r = parseInt(match[0]);
+            let g = parseInt(match[1]);
+            let b = parseInt(match[2]);
+            if (lighten) {
+                r = Math.min(255, r + amount);
+                g = Math.min(255, g + amount);
+                b = Math.min(255, b + amount);
+            } else {
+                r = Math.max(0, r - amount);
+                g = Math.max(0, g - amount);
+                b = Math.max(0, b - amount);
+            }
+            return `rgb(${r}, ${g}, ${b})`; // Return darkened color
+        }
+
+        // Define colors for inset effect
+        let highlightColor = adjustColor(this.color, 40, true); // lighter for top and left
+        let shadowColor = adjustColor(this.color, 40, false); // darker for bottom & right
+        let borderWidth = 2.5; // Thickness of inset "shadow" border; reduced to 2 for thinner inset effect
+
+        // Draw the main square (background)
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+
+        // Draw inset shadow effect using lines or thing rectangles
+        // Top highlight
+        ctx.fillStyle = highlightColor;
+        ctx.fillRect(this.x, this.y, this.width, borderWidth); // Top edge
+
+        // Left highlight
+        ctx.fillRect(this.x, this.y, borderWidth, this.height); // Left edge
+
+        // Bottom shadow
+        ctx.fillStyle = shadowColor;
+        ctx.fillRect(this.x, this.y + this.height - borderWidth, this.width, borderWidth); // bottom edge
+
+        // Right shadow
+        ctx.fillRect(this.x + this.width - borderWidth, this.y, borderWidth, this.height); // Right edge
+
+        // Draw the inner square (the "inset" part)
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x + borderWidth, this.y + borderWidth, this.width - 2 * borderWidth, this.height - 2 * borderWidth);
     }
+
     this.newPos = function() {
         this.x += this.speedX;
 
@@ -174,8 +212,13 @@ function updateGameArea() {
         } else {
             // If this piece is at bottom, create new piece
             if (i === gamePieces.length - 1) {
-                let randomX = Math.floor(Math.random() * (myGameArea.canvas.width - 30));
-                gamePieces.push(new component(30, 30, getRandomColor, randomX, 0));
+                // let randomX = Math.floor(Math.random() * (myGameArea.canvas.width - 30));
+
+                // New change at 9:24 on 3/13/25
+                let randomX = Math.round(Math.random() * (myGameArea.canvas.width - 30) / 30) * 30;
+
+
+                gamePieces.push(new component(26, 30, getRandomColor, randomX, 0));
             }
         }
 
@@ -194,6 +237,10 @@ function updateGameArea() {
                     console.log(`Piece ${i} is stacking on top of Piece ${j}`);
 
                     piece.y = other.y - piece.height; // Snap to top of other piece
+
+                    // New change 9:16am 3/13/25 - creates bobbing effect upon landing
+                    // piece.y = Math.round((other.y - piece.height) / 30) * 30;
+
                     piece.speedY = 0; // Stop falling
                     piece.hasLanded = true; // this is required to make it work
                 }
@@ -206,7 +253,7 @@ function updateGameArea() {
     if (gamePieces.length > 0) { // Make sure there's at least one piece
         let lastPiece = gamePieces[gamePieces.length - 1];
         // Check how new pieces are spawned
-        if (lastPiece.y + lastPiece.height >= myGameArea.canvas.height || lastPiece.hasLanded) { // adding `lastPiece.hasLanded` ensures that a piece will spawn if last piece touches floor or another piece
+        if (lastPiece.y + lastPiece.height >= myGameArea.canvas.height || lastPiece.hasLanded) { // adding lastPiece.hasLanded ensures that a piece will spawn if last piece touches floor or another piece
             let randomX = Math.floor(Math.random() * (myGameArea.canvas.width - 30));
             // gamePieces.push(new component(30, 30, getRandomColor(), randomX, 0));
             gamePieces.push(new component(26, 26, getRandomColor(), randomX, 0));
