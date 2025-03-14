@@ -150,7 +150,8 @@ var myGameArea = {
 }
 
 // Component (Game Piece) - this is where you define the shapes, size
-function component(width, height, color, x, y) {
+function component(width, height, color, x, y) 
+{
     this.myGameArea = myGameArea;
     this.width = width;
     this.height = height;
@@ -167,8 +168,10 @@ function component(width, height, color, x, y) {
         ctx.fillRect(this.x, this.y, this.width, this.height);
     
         // Apply inset effect only for grey barrier pieces
-        if (this.color === "rgb(128, 128, 128)") { // changing to RGB made the gray barrier inset effect work
-            console.log("Applying inset effect for grey piece at", this.x, this.y);
+        // if (this.color === "rgb(128, 128, 128)") { // changing to RGB made the gray barrier inset effect work
+        //     console.log("Applying inset effect for grey piece at", this.x, this.y);
+
+            // Apply inset effect to all pieces, not just grey barrier
             let highlightColor = adjustColor(this.color, 60, true); // Lighter for top and left
             let shadowColor = adjustColor(this.color, 60, false); // Darker for bottom and right
             let borderWidth = 2.5; // Thickness of inset border
@@ -186,7 +189,6 @@ function component(width, height, color, x, y) {
     
             // Right shadow
             ctx.fillRect(this.x + this.width - borderWidth, this.y, borderWidth, this.height); // Right edge
-        }
     };
 
 
@@ -202,11 +204,19 @@ function component(width, height, color, x, y) {
 
 // Random colors for game pieces
 function getRandomColor() {
-    let r = Math.floor(Math.random() * 256); // Random red (0-255)
-    let g = Math.floor(Math.random() * 256); // Random green (0-255)
-    let b = Math.floor(Math.random() * 256); // Random blue (0-255)
+    let r = Math.floor(Math.random() * 121) + 100; // Random red (100-220)
+    let g = Math.floor(Math.random() * 121) + 100; // Random green (100-220)
+    let b = Math.floor(Math.random() * 121) + 100; // Random blue (100-220)
+    
     return `rgb(${r}, ${g}, ${b})`; // Return as RBG string
 }
+
+// function getRandomColor() {
+//     let r = Math.floor(Math.random() * 256); // Random red (0-255)
+//     let g = Math.floor(Math.random() * 256); // Random green (0-255)
+//     let b = Math.floor(Math.random() * 256); // Random blue (0-255)
+//     return `rgb(${r}, ${g}, ${b})`; // Return as RBG string
+// }
 
 function updateGameArea() {
     if (myGameArea.paused) return; // Skip updates if paused
